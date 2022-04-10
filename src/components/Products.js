@@ -31,7 +31,7 @@ closeModal =() =>{
                     <div>Loading...</div>
                 ) : (
                 <ul className="products">
-                {this.props.products.map(product => (
+                {this.props.products.map((product) => (
                     <li key={product._id}>
                         <div className="product">
                             <a 
@@ -52,11 +52,10 @@ closeModal =() =>{
                             </div>
                         </div>
                     </li>
-                ))};
+                ))}
             </ul>
-        )}
-            
-        </Fade>
+        )}            
+    </Fade>
         {product && (
             <Modal isOpen={true} onRequestClose={this.closeModal}>
                 <Zoom>
@@ -100,6 +99,9 @@ closeModal =() =>{
     );
   }
 }
-export default connect((state)=>({ products: state.products.items }),{
+export default connect(
+    (state)=>({ products: state.products.filteredItems }),
+    {
     fetchProducts,
-})(Products);
+    }
+)(Products);
