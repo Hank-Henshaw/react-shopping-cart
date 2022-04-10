@@ -3,14 +3,19 @@ import formatCurrency from '../util';
 import Fade from "react-reveal/Fade";
 import Modal from "react-modal";
 import Zoom  from "react-reveal/Zoom";
+import { connect } from "react-redux";
+import { fetchProducts } from "../actions/productionActions";
 
-export default class Products extends Component {
+class Products extends Component {
     constructor(props){
         super(props);
         this.state = {
             product: null,
         };
     }
+componentDidMount() {
+    this.props.fetchProducts();
+}
 openModal = (product) => {
     this.setState({ product });
 };
@@ -22,7 +27,10 @@ closeModal =() =>{
     return (
       <div>
           <Fade bottom cascade>
-            <ul className="products">
+              {!this.props.products ? (
+                    <div>Loading...</div>
+                ) : (
+                <ul className="products">
                 {this.props.products.map(product => (
                     <li key={product._id}>
                         <div className="product">
@@ -44,8 +52,10 @@ closeModal =() =>{
                             </div>
                         </div>
                     </li>
-                ))}
+                ))};
             </ul>
+        )}
+            
         </Fade>
         {product && (
             <Modal isOpen={true} onRequestClose={this.closeModal}>
@@ -71,10 +81,13 @@ closeModal =() =>{
                             </p>
                             <div className="product-price">
                                 <div>{formatCurrency(product.price)}</div>
-                                <button className="button primary" onClick={()=>{
+                                <button 
+                                className="button primary" 
+                                onClick={()=>{
                                     this.props.addToCart(product);
                                     this.closeModal();
-                                }}>
+                                }}
+                                >
                                     Add To Cart
                                 </button>
                             </div>
@@ -84,6 +97,9 @@ closeModal =() =>{
             </Modal>
         )}
       </div>
-    )
+    );
   }
 }
+export default connect((state)=>({ products: state.products.items }),{
+    fetchProducts,
+})(Products);
